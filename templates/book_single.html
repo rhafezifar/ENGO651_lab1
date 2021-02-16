@@ -5,6 +5,8 @@
     <title>Register</title>
 </head>
 <body>
+<a href="{{ url_for('search') }}">Search Page</a><br>
+<a href="{{ url_for('logout') }}">Logout</a><br>
 
 <h2>{{ title }}</h2>
 <h3>by: {{ author }} ({{ year }})</h3>
@@ -16,7 +18,10 @@
 {% if search_result %}
 <ol>
     {% for review in search_result %}
-    <li>{{ review }}</li>
+    <li>{{ review.username }}: ({{ review.rating }})</li>
+    <ul>
+        <li>{{review.review}}</li>
+    </ul>
     {% endfor %}
 </ol>
 {% else %}
