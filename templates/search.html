@@ -26,7 +26,11 @@
     <input type="submit" value="Search">
 </form>
 
-{% if search_result %}
+
+{% if search_result|length == 0 and (isbn or title or author)%}
+    <h3>No result found for this search.</h3>
+{% else %}
+{% if search_result|length > 0 %}
 <table>
     <tr>
         <th>ISBN</th>
@@ -43,6 +47,7 @@
     </tr>
     {% endfor %}
 </table>
+{% endif %}
 {% endif %}
 
 </body>

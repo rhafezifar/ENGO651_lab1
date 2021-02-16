@@ -86,7 +86,9 @@ def search():
     if not (isbn or title or author):
         return render_template('search.html')
 
-    results = db.execute(f"select * from books where isbn ILIKE '%{isbn}%' and title ILIKE '%{title}%' and author ILIKE '%{author}%'")
+    results = db.execute(
+        f"select * from books where isbn ILIKE '%{isbn}%' and title ILIKE '%{title}%' and author ILIKE '%{author}%'"
+    )
     result_list = []
     for r in results:
         result_list.append({'isbn': r[0], 'title': r[1], 'author': r[2], 'year': r[3]})
@@ -104,4 +106,39 @@ def book_page(isbn):
         return "Book Not found!"
     book = results.first()
 
-    return render_template('book_single.html', isbn=book[0], title=book[1], author=book[2], year=book[3])
+    reviews = db.execute(f"SELECT * from book_reviews where book_isbn='{isbn}'")
+    reviews_list = []
+    for review in reviews:
+        reviews_list.append({'username': review[1], 'review': review[2], 'rating': review[3]})
+
+    return render_template(
+        'book_single.html',
+        isbn=book[0], title=book[1], author=book[2], year=book[3],
+        search_result=reviews_list,
+    )
+
+
+@app.route("/submit-review", methods=['POST'])
+def submit_review():
+    if 'username' not in session:
+        flash("You are not logged in!")
+        return redirect(url_for('index'))
+    username = session['username']
+    isbn = request.form.get('isbn')
+
+    result = db.execute(
+        f"SELECT * from book_reviews where reviewer_username='{username}' AND book_isbn='{isbn}'"
+    )
+    if result.rowcount == 1:
+        flash("Error: Sorry, you've previously wrote a review for this book.")
+        return redirect(url_for('book_page', isbn=isbn))
+
+    review = request.form.get('review')
+    rating = request.form.get('score')
+
+    db.execute(
+        f"INSERT INTO book_reviews (book_isbn, reviewer_username, review, rating) VALUES ('{isbn}', '{username}', '{review}', {rating})"
+    )
+    db.commit()
+    flash("Your review successfully published.")
+    return redirect(url_for('book_page', isbn=isbn))
