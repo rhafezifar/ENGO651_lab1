@@ -27,4 +27,4 @@ user can search a book by its ISBN or title or the author. This page could find 
 After choosing one book from search page, the user can see the details about that book in this new page. It also shows the reviews on that book. Users can leave comments and rate the book (from 1 to 5), then submit it.  
 ---
 
-[**Click here to see the video for demonstrating the project**](https://drive.google.com/file/d/1kY_UCrHrtYFGKR6x90u0rOPrSeuW_hf_/view?usp=sharing)
+[**Click here to see the video for demonstrating the project**](https://drive.google.com/file/d/1dOKPU8b5mTCAS0Oxj3nqLctqeyE-7E3q/view?usp=sharing)
