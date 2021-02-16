@@ -24,4 +24,7 @@ this page is for new users who still do not have an account
 - **search.html file:**  
 user can search a book by its ISBN or title or the author. This page could find any matches and show the results after the user submit the information, even if just part of a title, ISBN or author name are typed.  
 - **book_single.html file:**  
-After choosing one book from search page, the user can see the details about that book in this new page. It also shows the reviews on that book. Users can leave comments and rate the book (from 1 to 5), then submit it.   
+After choosing one book from search page, the user can see the details about that book in this new page. It also shows the reviews on that book. Users can leave comments and rate the book (from 1 to 5), then submit it.  
+---
+
+[**Click here to see the video for demonstrating the project**](https://drive.google.com/file/d/1kY_UCrHrtYFGKR6x90u0rOPrSeuW_hf_/view?usp=sharing)
