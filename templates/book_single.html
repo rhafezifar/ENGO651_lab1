@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <title>Book</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 <body>
 <a href="{{ url_for('search') }}">Search Page</a><br>
@@ -14,7 +20,18 @@
 
 <br><br>
 <h3>Reviews:</h3>
-
+<p>Google Books Review Data:</p>
+<table>
+    <tr>
+        <th>Rating Count</th>
+        <th>Average Rating</th>
+    </tr>
+    <tr>
+        <td>{{ rating_count }}</td>
+        <td>{{ average_rating }}</td>
+    </tr>
+</table>
+<br>
 {% if search_result %}
 <ol>
     {% for review in search_result %}

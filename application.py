@@ -1,5 +1,6 @@
 import os
 
+import requests
 from flask import Flask, session, request, render_template, redirect, url_for, flash
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -111,10 +112,21 @@ def book_page(isbn):
     for review in reviews:
         reviews_list.append({'username': review[1], 'review': review[2], 'rating': review[3]})
 
+    google_api = "https://www.googleapis.com/books/v1/volumes"
+    response = requests.get(google_api, params={'q': f'isbn:{isbn}'}).json()
+    try:
+        average_rating = response['items'][0]['volumeInfo']['averageRating']
+        rating_count = response['items'][0]['volumeInfo']['ratingsCount']
+    except KeyError:
+        average_rating = "Not available"
+        rating_count = "Not available"
+
     return render_template(
         'book_single.html',
         isbn=book[0], title=book[1], author=book[2], year=book[3],
         search_result=reviews_list,
+        average_rating=average_rating,
+        rating_count=rating_count,
     )
 
 
