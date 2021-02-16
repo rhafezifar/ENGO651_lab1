@@ -1,7 +1,7 @@
 import os
 
 import requests
-from flask import Flask, session, request, render_template, redirect, url_for, flash
+from flask import Flask, session, request, render_template, redirect, url_for, flash, jsonify, abort
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -154,3 +154,42 @@ def submit_review():
     db.commit()
     flash("Your review successfully published.")
     return redirect(url_for('book_page', isbn=isbn))
+
+
+@app.route("/api/<isbn>", methods=['GET'])
+def api(isbn):
+    if 'username' not in session:
+        flash("You are not logged in!")
+        return redirect(url_for('index'))
+
+    results = db.execute(f"select * from books where isbn = '{isbn}'")
+    if results.rowcount == 0:
+        abort(404)
+
+    google_api = "https://www.googleapis.com/books/v1/volumes"
+    response = requests.get(google_api, params={'q': f'isbn:{isbn}'}).json()
+    if response['totalItems'] == 0:
+        abort(404)
+    average_rating = response['items'][0]['volumeInfo'].get('averageRating')
+    rating_count = response['items'][0]['volumeInfo'].get('ratingsCount')
+    published_date = response['items'][0]['volumeInfo'].get('publishedDate')
+    identifiers = response['items'][0]['volumeInfo'].get('industryIdentifiers')
+    ISBN_10 = None
+    ISBN_13 = None
+    for identifier in identifiers:
+        if identifier.get('type') == 'ISBN_10':
+            ISBN_10 = identifier.get('identifier')
+        if identifier.get('type') == 'ISBN_13':
+            ISBN_13 = identifier.get('identifier')
+
+    book = results.first()
+    book_response = {
+        'title': book[1],
+        'author': book[2],
+        'publishedDate': published_date,
+        "ISBN_10": ISBN_10,
+        "ISBN_13": ISBN_13,
+        "reviewCount": rating_count,
+        "averageRating": average_rating,
+    }
+    return jsonify(book_response)
