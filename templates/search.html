@@ -27,11 +27,22 @@
 </form>
 
 {% if search_result %}
-<ol>
+<table>
+    <tr>
+        <th>ISBN</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Year Published</th>
+    </tr>
     {% for book in search_result %}
-    <li><a href="{{ url_for('book') }}">{{ book }}</a></li>
+    <tr>
+        <td><a href="{{ url_for('book_page', isbn=book.isbn) }}">{{ book.isbn }}</a></td>
+        <td>{{ book.title }}</td>
+        <td> {{ book.author }}</td>
+        <td> {{ book.year }} </td>
+    </tr>
     {% endfor %}
-</ol>
+</table>
 {% endif %}
 
 </body>

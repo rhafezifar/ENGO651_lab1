@@ -89,5 +89,19 @@ def search():
     results = db.execute(f"select * from books where isbn ILIKE '%{isbn}%' and title ILIKE '%{title}%' and author ILIKE '%{author}%'")
     result_list = []
     for r in results:
-        result_list.append(f"ISBN: {r[0]} \t\t Title: {r[1]} \t\t Author: {r[2]} \t\t Year Published: {r[3]}")
+        result_list.append({'isbn': r[0], 'title': r[1], 'author': r[2], 'year': r[3]})
     return render_template('search.html', search_result=result_list, isbn=isbn, title=title, author=author)
+
+
+@app.route("/book/<isbn>", methods=['GET'])
+def book_page(isbn):
+    if 'username' not in session:
+        flash("You are not logged in!")
+        return redirect(url_for('index'))
+
+    results = db.execute(f"select * from books where isbn = '{isbn}'")
+    if results.rowcount == 0:
+        return "Book Not found!"
+    book = results.first()
+
+    return render_template('book_single.html', isbn=book[0], title=book[1], author=book[2], year=book[3])
