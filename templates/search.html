@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('search') }}", method="get">
+    <label for="isbn">ISBN:</label><br>
+    <input type="text" id="isbn" name="isbn" value="{{ isbn }}"><br>
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" value="{{ title }}"><br><br>
+    <label for="author">Author:</label><br>
+    <input type="text" id="author" name="author" value="{{ author }}"><br><br>
+    <input type="submit" value="Search">
+</form>
+
+{% if search_result %}
+<ol>
+    {% for book in search_result %}
+    <li><a href="{{ url_for('book') }}">{{ book }}</a></li>
+    {% endfor %}
+</ol>
+{% endif %}
+
+</body>
+</html>

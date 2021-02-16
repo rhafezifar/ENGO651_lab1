@@ -79,5 +79,15 @@ def search():
     if 'username' not in session:
         flash("You are not logged in!")
         return redirect(url_for('index'))
-    return "TODO: Search page"
-    # return render_template('search.html')
+    isbn = request.args.get('isbn')
+    title = request.args.get('title')
+    author = request.args.get('author')
+    # print(isbn, title, author)
+    if not (isbn or title or author):
+        return render_template('search.html')
+
+    results = db.execute(f"select * from books where isbn ILIKE '%{isbn}%' and title ILIKE '%{title}%' and author ILIKE '%{author}%'")
+    result_list = []
+    for r in results:
+        result_list.append(f"ISBN: {r[0]} \t\t Title: {r[1]} \t\t Author: {r[2]} \t\t Year Published: {r[3]}")
+    return render_template('search.html', search_result=result_list, isbn=isbn, title=title, author=author)
