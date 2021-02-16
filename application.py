@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, request, render_template
+from flask import Flask, session, request, render_template, redirect, url_for, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -33,8 +33,10 @@ def login():
     result = db.execute(f"SELECT * from users where username='{username}' AND password='{password}'")
     if result.rowcount == 1:
         session['username'] = username
-        return f"Welcome {username}!"
-    return "Error: username and password doesn't match."
+        flash("Logged in successfully. You can now search the books in the blow form.")
+        return redirect(url_for('search'))
+    flash("Error: username and password doesn't match.")
+    return redirect(url_for('index'))
 
 
 @app.route("/register_form", methods=['GET'])
@@ -48,10 +50,14 @@ def register():
     password = request.form.get('password')
     result = db.execute(f"SELECT * from users where username='{username}'")
     if result.rowcount == 1:
-        return "Error: The entered username is taken. please try a different username."
+        flash("Error: The entered username is taken. please try a different username.")
+        return redirect(url_for('register_form'))
+
     db.execute(f"INSERT INTO users (username, password) VALUES ('{username}', '{password}')")
     db.commit()
-    return "OK. registration done"
+    session['username'] = username
+    flash("You are now registered and logged in successfully. You can now search the books in the blow form.")
+    return redirect(url_for('search'))
 
 
 @app.route("/login_test", methods=['GET'])
@@ -64,4 +70,14 @@ def login_test():
 @app.route("/logout", methods=['GET'])
 def logout():
     del session['username']
-    return "Logged out successfully."
+    flash("Logged out successfully.")
+    return redirect(url_for('index'))
+
+
+@app.route("/search", methods=['GET'])
+def search():
+    if 'username' not in session:
+        flash("You are not logged in!")
+        return redirect(url_for('index'))
+    return "TODO: Search page"
+    # return render_template('search.html')
